@@ -53,6 +53,14 @@ if id -u git; then
 	chown_if_exists -R git:git /var/log/gitlab/gitlab-rails/*.log
 	chown_if_exists -R git:git /var/log/gitlab/gitlab-shell/*.log
 	chown_if_exists -R git:git /var/log/gitlab/unicorn/*.log
+	
+        # Fix Backup dir and files
+        if [ -f /etc/gitlab/gitlab.rb ]; then
+          backup_path=$(grep "'backup_path'" /etc/gitlab/gitlab.rb | awk -F'=' '{ print $2 }' | sed 's/"//g')
+	  if [ -d $backup_path ]; then
+            chown_if_exists -R git:git $backup_path
+	  fi
+        fi
 fi
 
 # Fix nginx buffering directory permission
